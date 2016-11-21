@@ -4,13 +4,10 @@
  * and open the template in the editor.
  */
 
-package com.mycompany.users;
+package com.mycompany.banking.users;
 
 import com.google.gson.Gson;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -56,15 +53,14 @@ public class UserController {
         Gson gson = new Gson();
         UserService userServ = new UserService();
         String name = info.getQueryParameters().getFirst("name");
-	String occupation = info.getQueryParameters().getFirst("occupation");
-        String birthday = info.getQueryParameters().getFirst("birthday");
+	String email = info.getQueryParameters().getFirst("email");
+        String pin_o = info.getQueryParameters().getFirst("pin");
         
-        DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
-        Date Birthday = df.parse(birthday);
+        Integer pin = Integer.parseInt(pin_o);
         String status = "{'user-created':";
         
         try{
-            User user = new User(userServ.increment(),name,occupation,Birthday);
+            User user = new User(userServ.increment(),name,email,pin);
             status += "true,\"uri\":\"/api/Users/"+Integer.toString(userServ.increment())+"\"}";
             return Response.status(200).entity(gson.toJson(user)+","+status).build();
         }catch(Exception e){

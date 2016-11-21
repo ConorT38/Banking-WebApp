@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.mycompany.users;
+package com.mycompany.banking.users;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -19,9 +19,9 @@ public class UserService {
     Map<Integer,User> userList = new HashMap<Integer,User>();
     
     public UserService(){
-        User conor = new User(1,"Conor","Student",new Date());
-        User stewie = new User(2,"stewie","Student",new Date());
-        User johnny = new User(3,"johnny","Student",new Date());
+        User conor = new User(1,"Conor","datboi@gmail.com",3234);
+        User stewie = new User(2,"stewie","stew@ei.com",5554);
+        User johnny = new User(3,"johnny","John.s@gmail.com",8463);
         
         userList.put(1,conor);
         userList.put(2,stewie);

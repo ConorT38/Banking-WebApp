@@ -4,28 +4,26 @@
  * and open the template in the editor.
  */
 
-package com.mycompany.users;
+package com.mycompany.banking.users;
 
 /**
  *
  * @author Conor
  */
 
-import java.util.Date;
-import java.util.Map;
 
 class User {
 
     private  Integer id;
     private  String name;
-    private  String occupation;
-    private  Date birthday;
+    private  String email;
+    private  Integer pin;
     
-    public User(Integer id, String name, String occupation, Date birthday){
+    public User(Integer id, String name, String email, Integer pin){
          this.id = id;
          this.name = name;
-         this.occupation = occupation;
-         this.birthday = birthday;
+         this.email = email;
+         this.pin = pin;
     }
 
     Integer getID() {
@@ -40,13 +38,6 @@ class User {
         return name;
     }
 
-    public String getOccupation() {
-        return occupation;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
 
     public void setId(Integer id) {
         this.id = id;
@@ -56,13 +47,22 @@ class User {
         this.name = name;
     }
 
-    public void setOccupation(String occupation) {
-        this.occupation = occupation;
+    public String getEmail() {
+        return email;
     }
 
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
+    public void setEmail(String email) {
+        this.email = email;
     }
+
+    public Integer getPin() {
+        return pin;
+    }
+
+    public void setPin(Integer pin) {
+        this.pin = pin;
+    }
+
     
     
 }

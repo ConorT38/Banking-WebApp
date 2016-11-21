@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.mycompany.users.clients;
+package com.mycompany.banking.clients;
 
 /**
  *
