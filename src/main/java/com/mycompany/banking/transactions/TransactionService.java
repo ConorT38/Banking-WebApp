@@ -6,7 +6,6 @@
 
 package com.mycompany.banking.transactions;
 
-import com.mycompany.banking.accounts.Account;
 import com.mycompany.banking.accounts.AccountService;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +36,26 @@ public class TransactionService {
         Transaction tran = tranList.get(id);
         System.out.println(tran);
         return tran;
+    }
+    public Transaction addTransaction(Transaction transaction){
+        transaction.setAccount_number(tranList.size()+1);
+        tranList.put(transaction.getAccount_number(),transaction);
+        return transaction;
+    }
+    
+    public Transaction updateTransaction(Transaction transaction){
+        if(transaction.getAccount_number()<=0){
+            return null;
+        }
+        tranList.put(transaction.getAccount_number(),transaction);
+        return transaction;
+    }
+    
+    public void deleteTransaction(int id){
+        tranList.remove(id);
+    }
+    public int increment(){
+        return tranList.size()+1;
     }
     
     
