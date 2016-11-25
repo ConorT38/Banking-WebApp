@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.mycompany.banking.users.UserService;
 import static java.nio.file.attribute.AclEntryPermission.DELETE;
 import java.text.ParseException;
+import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -54,16 +55,17 @@ public class TransactionController {
     public Response createTransaction(@Context UriInfo info) throws ParseException{
         Gson gson = new Gson();
         TransactionService tranServ = new TransactionService();
-        String name = info.getQueryParameters().getFirst("name");
-	String email = info.getQueryParameters().getFirst("email");
-        String pin_o = info.getQueryParameters().getFirst("pin");
-        
-        Integer pin = Integer.parseInt(pin_o);
+        Integer account_number = Integer.parseInt(info.getQueryParameters().getFirst("account_number"));
+        String card_type = info.getQueryParameters().getFirst("card_type");
+	String desc = info.getQueryParameters().getFirst("desc");
+
+        float balance = Float.parseFloat(info.getQueryParameters().getFirst("pin"));
+        Date date = new Date();
         String status = "{'user-created':";
         
         try{
-            Transaction transaction = new Transaction(tranServ.increment(),name,email,pin);
-            status += "true,\"uri\":\"/api/Users/"+Integer.toString(tranServ.increment())+"\"}";
+            Transaction transaction = new Transaction(account_number, card_type, date, desc, balance);
+            status += "true,\"uri\":\"/api/Transaction/"+Integer.toString(tranServ.increment())+"\"}";
             return Response.status(200).entity(gson.toJson(transaction)+","+status).build();
         }catch(Exception e){
             status +="'false', 'error':\""+e+"\"}";

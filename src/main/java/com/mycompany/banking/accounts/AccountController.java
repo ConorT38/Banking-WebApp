@@ -7,12 +7,8 @@
 package com.mycompany.banking.accounts;
 
 import com.google.gson.Gson;
-import com.mycompany.banking.users.UserService;
-import static com.sun.xml.internal.ws.api.message.Packet.Status.Response;
-import java.awt.PageAttributes.MediaType;
-import static java.nio.file.attribute.AclEntryPermission.DELETE;
 import java.text.ParseException;
-import static javax.swing.text.html.FormSubmitEvent.MethodType.POST;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -28,6 +25,7 @@ import javax.ws.rs.core.UriInfo;
  *
  * @author Conor
  */
+@Path("/Account")
 public class AccountController {
     
     @GET
@@ -54,18 +52,16 @@ public class AccountController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(@Context UriInfo info) throws ParseException{
         Gson gson = new Gson();
-        AccountService userServ = new AccountService();
-        String name = info.getQueryParameters().getFirst("name");
-	String email = info.getQueryParameters().getFirst("email");
-        String pin_o = info.getQueryParameters().getFirst("pin");
-        
-        Integer pin = Integer.parseInt(pin_o);
+        AccountService accServ = new AccountService();
+        String sortcode = info.getQueryParameters().getFirst("sortcode");
+	float curr_balance = Float.parseFloat(info.getQueryParameters().getFirst("balance"));
+         
         String status = "{'user-created':";
         
         try{
-            User user = new User(userServ.increment(),name,email,pin);
-            status += "true,\"uri\":\"/api/Users/"+Integer.toString(userServ.increment())+"\"}";
-            return Response.status(200).entity(gson.toJson(user)+","+status).build();
+            Account account = new Account(accServ.increment(), sortcode, curr_balance);
+            status += "true,\"uri\":\"/api/Users/"+Integer.toString(accServ.increment())+"\"}";
+            return Response.status(200).entity(gson.toJson(account)+","+status).build();
         }catch(Exception e){
             status +="'false', 'error':\""+e+"\"}";
             return Response.status(200).entity(gson.toJson(status)).build();
@@ -77,10 +73,10 @@ public class AccountController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUser(@PathParam("id") String id){
-        AccountService userServ = new AccountService();
+        AccountService accServ = new AccountService();
         String status = "{'delete-status':";
         try{
-            userServ.deleteUser(Integer.parseInt(id));
+            accServ.deleteAccount(Integer.parseInt(id));
             status +="'success'}";
             return Response.status(200).entity(status).build();
         }catch(NumberFormatException e)

@@ -7,11 +7,15 @@
 package com.mycompany.banking.users;
 
 import com.google.gson.Gson;
+import com.mycompany.banking.accounts.Account;
+import com.mycompany.banking.accounts.AccountService;
+import com.mycompany.banking.database.Database;
 import java.text.ParseException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,6 +30,8 @@ import javax.ws.rs.core.UriInfo;
  */
 @Path("/Users")
 public class UserController {
+    
+    Database db = new Database();
    
    @GET
     @Produces("application/json")
@@ -46,7 +52,7 @@ public class UserController {
     }
     
     @POST
-    @Path("/Add")
+    @Path("/Signup")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(@Context UriInfo info) throws ParseException{
@@ -63,6 +69,44 @@ public class UserController {
             User user = new User(userServ.increment(),name,email,pin);
             status += "true,\"uri\":\"/api/Users/"+Integer.toString(userServ.increment())+"\"}";
             return Response.status(200).entity(gson.toJson(user)+","+status).build();
+        }catch(Exception e){
+            status +="'false', 'error':\""+e+"\"}";
+            return Response.status(200).entity(gson.toJson(status)).build();
+        }
+    }
+    
+    @POST
+    @Path("/Login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response Login(@Context UriInfo info) throws ParseException{            
+	String email = info.getQueryParameters().getFirst("email");
+        Integer pin = Integer.parseInt(info.getQueryParameters().getFirst("pin"));
+        
+        try{
+            db.Login(email,pin);
+            return Response.status(200).entity("{'login':'success'}").build();
+        }catch(Exception e){
+            return Response.status(200).entity("{'login':'failed'}").build();
+        }
+    }
+    
+    @PUT
+    @Path("/Add/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addAccount(@Context UriInfo info,@PathParam("id") String id) throws ParseException{
+        Gson gson = new Gson();
+        AccountService accServ = new AccountService();
+        String sortcode = info.getQueryParameters().getFirst("name");
+	float curr_balance = Float.parseFloat(info.getQueryParameters().getFirst("email"));
+         
+        String status = "{'user-created':";
+        
+        try{
+            Account account = new Account(Integer.parseInt(id), sortcode, curr_balance);
+            accServ.addAccount(account);
+            return Response.status(200).entity(gson.toJson(account)+","+status).build();
         }catch(Exception e){
             status +="'false', 'error':\""+e+"\"}";
             return Response.status(200).entity(gson.toJson(status)).build();
