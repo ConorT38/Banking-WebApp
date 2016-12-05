@@ -6,6 +6,9 @@
 
 package com.mycompany.banking.users;
 
+import com.mycompany.banking.database.Database;
+import java.sql.SQLException;
+
 /**
  *
  * @author Conor
@@ -18,12 +21,14 @@ class User {
     private  String name;
     private  String email;
     private  Integer pin;
+    Database db = new Database();
     
-    public User(Integer id, String name, String email, Integer pin){
+    public User(Integer id, String name, String email, Integer pin) throws SQLException{
          this.id = id;
          this.name = name;
          this.email = email;
          this.pin = pin;
+                 
     }
 
     Integer getID() {

@@ -11,7 +11,6 @@ package com.mycompany.banking.database;
  */
 import com.mycompany.banking.http.SessionHandler;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -24,9 +23,9 @@ public class Database {
     Statement st = null;
     ResultSet rs = null;
 
-    String url = "jdbc:mysql://localhost:3306/webapi";
+    String url = "jdbc:mysql://localhost:3306/webapi?autoReconnect=true";
     String user = "root";
-    String password = "";
+    String password = "Blizzardofozz1";
     
     SessionHandler session = new SessionHandler();
     
@@ -54,6 +53,15 @@ if (count == 1) {
     
     public void Logout(){
         
+    }
+    
+    public boolean insertUser(int id,String name, String email, int pin)throws SQLException{
+            con = this.Connect();
+            st = con.createStatement();
+            int res = st.executeUpdate("INSERT INTO users VALUES("+id+"'"+name+"','"+email+"',"+pin+");");
+            
+        
+        return true;
     }
     
     public String getVersion() throws SQLException{

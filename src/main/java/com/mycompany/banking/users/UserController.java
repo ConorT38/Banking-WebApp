@@ -6,10 +6,11 @@
 
 package com.mycompany.banking.users;
 
+import com.mycompany.banking.database.Database;
 import com.google.gson.Gson;
 import com.mycompany.banking.accounts.Account;
 import com.mycompany.banking.accounts.AccountService;
-import com.mycompany.banking.database.Database;
+import java.sql.SQLException;
 import java.text.ParseException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -35,7 +36,7 @@ public class UserController {
    
    @GET
     @Produces("application/json")
-    public Response getPayment(){
+    public Response getPayment() throws SQLException{
         Gson gson = new Gson();
        UserService userServ =  new UserService();
        return Response.status(200).entity(gson.toJson(userServ)).build();
@@ -44,7 +45,7 @@ public class UserController {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response getPayment(@PathParam("id") String id){
+    public Response getPayment(@PathParam("id") String id) throws SQLException{
        Gson gson = new Gson();
        UserService userServ =  new UserService();
        
@@ -55,7 +56,7 @@ public class UserController {
     @Path("/Signup")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(@Context UriInfo info) throws ParseException{
+    public Response createUser(@Context UriInfo info) throws ParseException, SQLException{
         Gson gson = new Gson();
         UserService userServ = new UserService();
         String name = info.getQueryParameters().getFirst("name");
@@ -68,7 +69,7 @@ public class UserController {
         try{
             User user = new User(userServ.increment(),name,email,pin);
             status += "true,\"uri\":\"/api/Users/"+Integer.toString(userServ.increment())+"\"}";
-            return Response.status(200).entity(gson.toJson(user)+","+status).build();
+            return Response.status(200).entity("["+gson.toJson(user)+","+status+"]").build();
         }catch(Exception e){
             status +="'false', 'error':\""+e+"\"}";
             return Response.status(200).entity(gson.toJson(status)).build();
@@ -117,7 +118,7 @@ public class UserController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("id") String id){
+    public Response deleteUser(@PathParam("id") String id)throws SQLException{
         UserService userServ = new UserService();
         String status = "{'delete-status':";
         try{

@@ -1,0 +1,5 @@
+com\mycompany\banking\users\User.class
+com\mycompany\banking\http\SessionHandler.class
+com\mycompany\banking\http\LoginServlet.class
+com\mycompany\banking\transactions\Transaction.class
+com\mycompany\banking\database\Database.class
