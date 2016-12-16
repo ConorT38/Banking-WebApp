@@ -7,9 +7,14 @@
 package com.mycompany.banking.users;
 
 import com.mycompany.banking.database.Database;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Cookie;
 
 /**
  *
@@ -38,11 +43,16 @@ public class UserService {
         return user;
     }
     
-    public User addUser(User user) throws SQLException{
+    public User addUser(User user) throws SQLException, NoSuchAlgorithmException{
         user.setId(userList.size()+1);
         userList.put(user.getId(),user);
         db.insertUser(user.getName(),user.getEmail(),user.getPin());
         return user;
+    }
+    
+    public String getAll() throws SQLException{
+        return db.getAll();
+        
     }
     
     public User updateUser(User user){
@@ -58,6 +68,14 @@ public class UserService {
     }
     public int increment(){
         return userList.size()+1;
+    }
+    @GET
+    @Produces("application/json")
+    public Boolean checkLogin(@CookieParam("name") Cookie cookie){
+       if(cookie==null)
+            return null;
+       else
+            return true;
     }
     
 }

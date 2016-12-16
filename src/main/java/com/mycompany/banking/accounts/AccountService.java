@@ -6,6 +6,9 @@
 
 package com.mycompany.banking.accounts;
 
+import com.mycompany.banking.database.Database;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,15 +19,10 @@ import java.util.Map;
 public class AccountService {
     
     Map<Integer,Account> accountList = new HashMap<Integer,Account>();
+    Database db = new Database();
     
     public AccountService(){
-        Account conor = new Account(1,"AIBKE",(float)200.21);
-        Account stewie = new Account(2,"AIBD",(float)19992.04);
-        Account johnny = new Account(3,"AIBTY",(float)32.60);
         
-        accountList.put(1,conor);
-        accountList.put(2,stewie);
-        accountList.put(3,johnny);
     }
     
     public Account getId(int id){
@@ -33,9 +31,10 @@ public class AccountService {
         return account;
     }
     
-    public Account addAccount(Account account){
+    public Account addAccount(Account account) throws SQLException, NoSuchAlgorithmException{
         account.setAccount_number(accountList.size()+1);
         accountList.put(account.getAccount_number(),account);
+        db.insertAccount(account.getAccount_number(),account.getSortcode(),account.getCurr_balance());
         return account;
     }
     

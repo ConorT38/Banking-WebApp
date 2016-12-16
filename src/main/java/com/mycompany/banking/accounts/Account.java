@@ -16,7 +16,7 @@ public class Account {
     private String sortcode;
     private double curr_balance;
     
-    public Account(Integer account_number, String sortcode,float curr_balance){
+    public Account(Integer account_number, String sortcode,double curr_balance){
         this.account_number = account_number;
         this.sortcode = sortcode;
         this.curr_balance = curr_balance;
@@ -39,11 +39,11 @@ public class Account {
         this.sortcode = sortcode;
     }
 
-    public float getCurr_balance() {
-        return (float)curr_balance;
+    public double getCurr_balance() {
+        return curr_balance;
     }
 
-    public void setCurr_balance(float curr_balance) {
+    public void setCurr_balance(double curr_balance) {
         this.curr_balance = curr_balance;
     }
     

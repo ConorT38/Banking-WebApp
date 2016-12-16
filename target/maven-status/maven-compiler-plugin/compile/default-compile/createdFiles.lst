@@ -1,5 +1,10 @@
-com\mycompany\banking\users\User.class
+com\mycompany\banking\accounts\AccountService.class
+com\mycompany\banking\clients\GetClient.class
 com\mycompany\banking\http\SessionHandler.class
-com\mycompany\banking\http\LoginServlet.class
-com\mycompany\banking\transactions\Transaction.class
+com\mycompany\banking\transactions\TransactionController.class
 com\mycompany\banking\database\Database.class
+com\mycompany\banking\transactions\TransactionService.class
+com\mycompany\banking\clients\PostClient.class
+com\mycompany\banking\users\User.class
+com\mycompany\banking\transactions\Transaction.class
+com\mycompany\banking\accounts\Account.class

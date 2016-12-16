@@ -10,9 +10,11 @@ import com.mycompany.banking.database.Database;
 import com.google.gson.Gson;
 import com.mycompany.banking.accounts.Account;
 import com.mycompany.banking.accounts.AccountService;
+import com.mycompany.banking.http.LoginService;
 import java.sql.SQLException;
 import java.text.ParseException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -33,30 +36,40 @@ import javax.ws.rs.core.UriInfo;
 public class UserController {
     
     Database db = new Database();
+    LoginService logServ = new LoginService();
    
    @GET
     @Produces("application/json")
-    public Response getPayment() throws SQLException{
+    public Response getPayment(@CookieParam("email") Cookie cookie) throws SQLException{
+        if(logServ.checkLogin(cookie)){
         Gson gson = new Gson();
        UserService userServ =  new UserService();
-       return Response.status(200).entity(gson.toJson(userServ)).build();
+       return Response.status(200).entity(gson.toJson(userServ.getAll())).build();
+        }else{
+            return Response.status(200).entity("{'access': \"denied\"}").build();
+        }
     }
     
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response getPayment(@PathParam("id") String id) throws SQLException{
+    public Response getPayment(@PathParam("id") String id,@CookieParam("email") Cookie cookie) throws SQLException{
+        if(logServ.checkLogin(cookie)){
        Gson gson = new Gson();
        UserService userServ =  new UserService();
        
        return Response.status(200).entity(gson.toJson(userServ.getId(Integer.parseInt(id)))).build();
+        }else{
+            return Response.status(200).entity("{'access': \"denied\"}").build();
+        }
     }
     
     @POST
     @Path("/Signup")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(@Context UriInfo info) throws ParseException, SQLException{
+    public Response createUser(@Context UriInfo info,@CookieParam("email") Cookie cookie) throws ParseException, SQLException{
+        if(!logServ.checkLogin(cookie)){
         Gson gson = new Gson();
         UserService userServ = new UserService();
         String name = info.getQueryParameters().getFirst("name");
@@ -68,27 +81,14 @@ public class UserController {
         
         try{
             User user = new User(userServ.increment(),name,email,pin);
-            status += "true,\"uri\":\"/api/Users/"+Integer.toString(userServ.increment())+"\"}";
-            return Response.status(200).entity("["+gson.toJson(user)+","+status+"]").build();
+            userServ.addUser(user);
+            return Response.status(200).entity("[{'status': \"success\"}]").build();
         }catch(Exception e){
-            status +="'false', 'error':\""+e+"\"}";
+            status +="\"false\", 'error':\""+e+"\"}";
             return Response.status(200).entity(gson.toJson(status)).build();
         }
-    }
-    
-    @POST
-    @Path("/Login")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response Login(@Context UriInfo info) throws ParseException{            
-	String email = info.getQueryParameters().getFirst("email");
-        Integer pin = Integer.parseInt(info.getQueryParameters().getFirst("pin"));
-        
-        try{
-            db.Login(email,pin);
-            return Response.status(200).entity("{'login':'success'}").build();
-        }catch(Exception e){
-            return Response.status(200).entity("{'login':'failed'}").build();
+        }else{
+            return Response.status(200).entity("{'access': \"denied\"}").build();
         }
     }
     
@@ -96,7 +96,8 @@ public class UserController {
     @Path("/Add/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addAccount(@Context UriInfo info,@PathParam("id") String id) throws ParseException{
+    public Response addAccount(@Context UriInfo info,@PathParam("id") String id,@CookieParam("email") Cookie cookie) throws ParseException{
+        if(logServ.checkLogin(cookie)){
         Gson gson = new Gson();
         AccountService accServ = new AccountService();
         String sortcode = info.getQueryParameters().getFirst("name");
@@ -112,13 +113,17 @@ public class UserController {
             status +="'false', 'error':\""+e+"\"}";
             return Response.status(200).entity(gson.toJson(status)).build();
         }
+        }else{
+            return Response.status(200).entity("{'access': \"denied\"}").build();
+        }
     }
     
     @DELETE
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("id") String id)throws SQLException{
+    public Response deleteUser(@PathParam("id") String id,@CookieParam("email") Cookie cookie)throws SQLException{
+        if(logServ.checkLogin(cookie)){
         UserService userServ = new UserService();
         String status = "{'delete-status':";
         try{
@@ -129,6 +134,9 @@ public class UserController {
         {
             status +="'failed','error':'"+e+"'}";
             return Response.status(200).entity(status).build();
+        }
+        }else{
+            return Response.status(200).entity("{'access': \"denied\"}").build();
         }
     }
     
