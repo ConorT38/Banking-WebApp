@@ -7,6 +7,9 @@
 package com.mycompany.banking.transactions;
 
 import com.mycompany.banking.accounts.AccountService;
+import com.mycompany.banking.database.Database;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,17 +21,9 @@ import java.util.Map;
 public class TransactionService {
     
     Map<Integer,Transaction> tranList = new HashMap<Integer,Transaction>();
+    Database db = new Database();
     
     public TransactionService(){
-        AccountService accServ = new AccountService();
-        Transaction Conor = new Transaction(1,"Credit",new Date(),"Petrol",(float)-20.00);
-        Transaction Jakub = new Transaction(2,"Debit",new Date(),"Food",(float)-10.20);
-        Transaction Tranty = new Transaction(3,"Debit",new Date(),"Insurance",(float)-2000.00);
-        
-        tranList.put(1,Conor);
-        accServ.updateBalance(accServ.getId(1), (float)-10.20);
-        tranList.put(2,Jakub);
-        tranList.put(3,Tranty);
         
     }
     
@@ -37,9 +32,10 @@ public class TransactionService {
         System.out.println(tran);
         return tran;
     }
-    public Transaction addTransaction(Transaction transaction){
+    public Transaction addTransaction(Transaction transaction) throws SQLException, NoSuchAlgorithmException{
         transaction.setAccount_number(tranList.size()+1);
         tranList.put(transaction.getAccount_number(),transaction);
+        db.insertTransaction(transaction.getAccount_number(),transaction.getCard_type(),transaction.getDesc(),transaction.getBalance());
         return transaction;
     }
     

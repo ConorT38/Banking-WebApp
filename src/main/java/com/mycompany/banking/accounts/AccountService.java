@@ -50,7 +50,7 @@ public class AccountService {
         if(account.getAccount_number()<=0){
             return null;
         }
-        account = new Account(account.getAccount_number(),account.getSortcode(),(float) balance);
+        account = new Account(account.getAccount_number(),account.getSortcode(),balance);
         accountList.put(account.getAccount_number(),account);
         return account;
     }

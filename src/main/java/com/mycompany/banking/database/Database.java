@@ -93,6 +93,21 @@ if (count == 1) {
                 return false;
             }   
     }
+     public boolean insertTransaction(int id,String type, String desc, double balance)throws SQLException, NoSuchAlgorithmException{
+            con = this.Connect();
+            st = con.createStatement();
+            rs = st.executeQuery("SELECT MAX(id) as last_id from account");  
+            
+            if(rs.next()){
+            String  lastid = rs.getString("last_id");
+            System.out.println("INSERT INTO `transaction` VALUES("+(Integer.parseInt(lastid)+1)+",\""+type+"\",'"+desc+"',"+balance+","+id+");");
+            int res = st.executeUpdate("INSERT INTO `transaction` VALUES("+(Integer.parseInt(lastid)+1)+",\""+type+"\",'"+desc+"',"+balance+","+id+");");
+            int r = st2.executeUpdate("UPDATE account SET balance=balance+"+balance+" WHERE user ="+id);
+            return true; 
+            }else{
+                return false;
+            }   
+    }
     
     public String getVersion() throws SQLException{
             con = this.Connect();

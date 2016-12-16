@@ -76,14 +76,14 @@ public class AccountController {
          
         String status = "{'user-created':";
         
-        //try{
+        try{
             Account account = new Account(Integer.parseInt(user), sortcode, curr_balance);
             accServ.addAccount(account);
             return Response.status(200).entity(gson.toJson(account)).build();
-       // }catch(NumberFormatException | NoSuchAlgorithmException | SQLException e){
-          //  status +="'false', 'error':\""+e+"\"}";
-           // return Response.status(200).entity(gson.toJson(status)).build();
-       // }
+        }catch(NumberFormatException | NoSuchAlgorithmException | SQLException e){
+            status +="'false', 'error':\""+e+"\"}";
+            return Response.status(200).entity(gson.toJson(status)).build();
+        }
         }else{
             return Response.status(200).entity("{'access': \"denied\"}").build();
         }

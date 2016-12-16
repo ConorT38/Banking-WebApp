@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import com.mycompany.banking.http.LoginService;
 import com.mycompany.banking.users.UserService;
 import static java.nio.file.attribute.AclEntryPermission.DELETE;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 import javax.ws.rs.Consumes;
@@ -65,7 +67,7 @@ public class TransactionController {
     @Path("/Add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTransaction(@Context UriInfo info,@CookieParam("email") Cookie cookie) throws ParseException{
+    public Response createTransaction(@Context UriInfo info,@CookieParam("email") Cookie cookie) throws ParseException, SQLException, NoSuchAlgorithmException{
         if(logServ.checkLogin(cookie)){
         Gson gson = new Gson();
         TransactionService tranServ = new TransactionService();
@@ -73,18 +75,18 @@ public class TransactionController {
         String card_type = info.getQueryParameters().getFirst("card_type");
 	String desc = info.getQueryParameters().getFirst("desc");
 
-        float balance = Float.parseFloat(info.getQueryParameters().getFirst("pin"));
+        float balance = Float.parseFloat(info.getQueryParameters().getFirst("balance"));
         Date date = new Date();
-        String status = "{'user-created':";
+        String status = "{'transaction-created':";
         
-        try{
+        //try{
             Transaction transaction = new Transaction(account_number, card_type, date, desc, balance);
-            status += "true,\"uri\":\"/api/Transaction/"+Integer.toString(tranServ.increment())+"\"}";
+            tranServ.addTransaction(transaction);
             return Response.status(200).entity(gson.toJson(transaction)+","+status).build();
-        }catch(Exception e){
-            status +="'false', 'error':\""+e+"\"}";
-            return Response.status(200).entity(gson.toJson(status)).build();
-        }
+        //}catch(Exception e){
+          //  status +="'false', 'error':\""+e+"\"}";
+            //return Response.status(200).entity(gson.toJson(status)).build();
+        //}
         }else{
             return Response.status(200).entity("{'access': \"denied\"}").build();
         }
